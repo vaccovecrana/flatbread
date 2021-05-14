@@ -68,10 +68,4 @@ public class FdReflect {
     return isList(o) || isMap(o) || isSet(o) || isArray(o);
   }
 
-  public static boolean isBaseType(Object o) {
-    return isTextual(o)
-        || isEnum(o)
-        || isPrimitiveOrWrapper(o == null ? null : o.getClass());
-  }
-
 }
