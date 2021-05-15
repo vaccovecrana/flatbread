@@ -6,15 +6,24 @@ import java.util.Map;
 public class MyConfig {
 
   public enum MyRuntimeType { API_SERVER, BACKGROUND_JOB }
-
-  public enum MyActiveFeatures {
-    CACHE_RESPONSES, FILTER_ZERO_RESULTS, BLUE_DEPLOYMENT
-  }
+  public enum MyActiveFeatures { CACHE_RESPONSES, FILTER_ZERO_RESULTS, BLUE_DEPLOYMENT }
 
   public static class MyServiceConfig {
     public String host;
     public int port;
     public String userFdMask, passwordFdMask;
+  }
+
+  public static class MyKeyPair {
+    public String pubKey;
+    public String privKeyFdMask;
+
+    public static MyKeyPair from(String pubKey, String privKeyFdMask) {
+      MyKeyPair kp = new MyKeyPair();
+      kp.pubKey = pubKey;
+      kp.privKeyFdMask = privKeyFdMask;
+      return kp;
+    }
   }
 
   public MyServiceConfig dbConfig;
@@ -30,8 +39,8 @@ public class MyConfig {
 
   public boolean[] bitFlags;
 
+  public List<MyKeyPair> keyPairs;
   public List<MyActiveFeatures> activeFeatures;
-
   public Map<String, Integer> priceConfig;
 
 }
