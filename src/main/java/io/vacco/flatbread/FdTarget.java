@@ -14,13 +14,13 @@ public class FdTarget<T> {
   public Map<String, Field> uncasedFields;
 
   public FdTarget(String rawValue) {
-    this.rawValue = Objects.requireNonNull(rawValue);
+    this.rawValue = rawValue;
   }
 
-  public Optional<Field> getField(String anyCaseName) {
+  public Field getField(String anyCaseName) {
     return uncasedFields == null
-        ? Optional.empty()
-        : Optional.of(uncasedFields.get(anyCaseName.toLowerCase()));
+        ? null
+        : uncasedFields.get(anyCaseName.toLowerCase());
   }
 
   public FdTarget<T> set(Class<T> type) {

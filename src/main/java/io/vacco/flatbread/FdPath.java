@@ -4,12 +4,13 @@ import java.util.*;
 
 public class FdPath implements Comparable<FdPath> {
 
-  public final String key;
+  public final String key, attribute;
   public final String[] components;
 
   public FdPath(String key) {
     this.key = Objects.requireNonNull(key);
     this.components = key.split("\\.");
+    this.attribute = components[components.length - 1];
   }
 
   public Optional<FdPath> parent() {

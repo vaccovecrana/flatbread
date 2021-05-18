@@ -74,7 +74,11 @@ public class FdSpec {
       flats.put("myApp.cfg.keyPairs.1.pubKey", kpPub1);
       flats.put("myApp.cfg.keyPairs.1.privKeyFdMask", kpPrv1);
 
-      MyConfig cfg = new Fbd ().apply(MyConfig.class, flats, "myApp");
+      Fbd<MyConfig> fbd = new Fbd<>(MyConfig.class, flats, "myApp");
+      MyConfig cfg = fbd.load();
+      int arrayMatches = fbd.pathSeqLength(new FdPath("cfg.bitFlags.0"));
+
+      System.out.println(arrayMatches);
       System.out.println(new FdLog().apply(cfg));
     });
 

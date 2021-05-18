@@ -4,12 +4,50 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.vacco.flatbread.FdObjects.*;
 import static io.vacco.flatbread.FdReflect.*;
 import static java.lang.String.format;
 
-public class Fbd {
+public class Fbd<T> {
 
   private final Map<FdPath, FdTarget<?>> targets = new TreeMap<>();
+
+  public Fbd(Class<T> tClass, Map<String, String> dotKeys, String keyPrefix) {
+    try {
+      targets.putAll(
+          dotKeys.entrySet().stream().collect(Collectors.toMap(
+              e -> new FdPath(e.getKey().replace(format("%s.", keyPrefix), "")),
+              e -> new FdTarget<>(e.getValue())
+          ))
+      );
+      Set<FdPath> allPaths = new TreeSet<>(targets.keySet());
+      targets.keySet().forEach(p -> {
+        Optional<FdPath> parent = p.parent();
+        while (parent.isPresent()) {
+          allPaths.add(parent.get());
+          parent = parent.get().parent();
+        }
+      });
+      for (FdPath p : allPaths) {
+        if (!targets.containsKey(p)) { targets.put(p, null); }
+      }
+      targets.entrySet().stream()
+          .filter(e -> e.getKey().level() == 0)
+          .findFirst().ifPresent(
+          e -> targets.put(e.getKey(), new FdTarget<T>("").set(tClass)));
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public int pathSeqLength(FdPath p) {
+    Optional<FdPath> pp = p.parent();
+    if (pp.isPresent()) {
+      String parentRegex = format("%s.\\d+", pp.get().key).replace(".", "\\.");
+      return (int) targets.keySet().stream().filter(k -> k.key.matches(parentRegex)).count();
+    }
+    throw new IllegalArgumentException(format("Path [%s] has no parent path", p));
+  }
 
   public Object init(Field f, String rawValue) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     Class<?> fType = f.getType();
@@ -26,54 +64,49 @@ public class Fbd {
     throw new IllegalStateException("lol");
   }
 
-  public <T> void set(Class<T> type, T target, String field, String value) {
+  public void set(FdTarget<T> target, String field, String value) {
     try {
-      Field f = type.getField(field);
+      Field f = target.getField(field);
       Object v = init(f, value);
       f.set(target, v);
     } catch (Exception e) {
       throw new IllegalStateException(
-          format("Failed to set field [%s] in class [%s] with value [%s]", field, type, value)
+          format("Failed to set field [%s] in class [%s] with value [%s]", field, target.type, value)
       );
     }
   }
 
-  public <T> T init(Class<T> root, FdPath path, String v) {
-    System.out.printf("%s %s %s%n", root, path, v);
-    // if (path.length == 1) { set(tClass, target, path[0], v); }
-    return null;
+  public Collection<FdEntry> pathsAt(int level) {
+    return targets.entrySet().stream()
+        .filter(e -> e.getKey().level() == level)
+        .map(FdEntry::of)
+        .collect(Collectors.toList());
   }
 
-  public <T> T apply(Class<T> tClass, Map<String, String> dotKeys, String keyPrefix) {
-    try {
-      targets.putAll(
-          dotKeys.entrySet().stream().collect(Collectors.toMap(
-              e -> new FdPath(e.getKey().replace(format("%s.", keyPrefix), "")),
-              e -> new FdTarget<>(e.getValue())
-          ))
-      );
+  public void link(Collection<FdEntry> lp1) {
+    lp1.forEach(e -> e.path.parent().ifPresent(p0 -> {
+      FdTarget<?> t0 = targets.get(p0);
+      FdTarget<?> t1 = e.target;
+      if (t1 == null) {
 
-      Set<FdPath> allPaths = new TreeSet<>(targets.keySet());
-      targets.keySet().forEach(p -> {
-        Optional<FdPath> parent = p.parent();
-        while (parent.isPresent()) {
-          allPaths.add(parent.get());
-          parent = parent.get().parent();
-        }
-      });
+        Class<?> targetType = t0.getField(e.path.attribute).getType();
 
-      for (FdPath p : allPaths) {
-        if (!targets.containsKey(p)) { targets.put(p, null); }
+
+
+        System.out.println(t1);
       }
+      System.out.println(t0);
+    }));
+  }
 
-      targets.entrySet().stream().filter(e -> e.getKey().level() == 0).findFirst().ifPresent(e -> {
-        targets.put(e.getKey(), new FdTarget<T>("").set(tClass));
-      });
-
-      return null;
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
+  public T load() {
+    int k = 0;
+    Collection<FdEntry> lp0 = pathsAt(k);
+    while (!lp0.isEmpty()) {
+      link(lp0);
+      lp0 = pathsAt(++k);
     }
+    return null;
   }
 
 }
