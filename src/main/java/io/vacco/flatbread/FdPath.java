@@ -44,10 +44,6 @@ public class FdPath implements Comparable<FdPath> {
   public int level() { return components.length - 1; }
 
   @Override public int compareTo(FdPath o) { return this.key.compareTo(o.key); }
-  @Override public boolean equals(Object o) {
-    return o instanceof FdPath && ((FdPath) o).key.equals(key);
-  }
-  @Override public int hashCode() { return key.hashCode(); }
   @Override public String toString() { return String.format("(%s) %s -> [%s, %s]", level(), key, field, target); }
 
 }
