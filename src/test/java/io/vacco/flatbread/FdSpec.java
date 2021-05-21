@@ -90,6 +90,54 @@ public class FdSpec {
       System.out.println(new FdLog().apply(cfg));
     });
 
+    it("Can hydrate a non-cyclic object from environment notation property strings.", () -> {
+      Map<String, String> env = new LinkedHashMap<>();
+
+      env.put("MYAPP_CFG_DBCONFIG_HOST", host);
+      env.put("MYAPP_CFG_DBCONFIG_PORT", Integer.toString(port));
+      env.put("MYAPP_CFG_DBCONFIG_USERFDMASK", user);
+      env.put("MYAPP_CFG_DBCONFIG_PASSWORDFDMASK", pass);
+
+      env.put("MYAPP_CFG_INSTANCENAME", instance);
+      env.put("MYAPP_CFG_RUNTIMETYPE", MyConfig.MyRuntimeType.API_SERVER.toString());
+
+      env.put("MYAPP_CFG_ACTIVEFEATURES_0", MyConfig.MyActiveFeatures.BLUE_DEPLOYMENT.toString());
+      env.put("MYAPP_CFG_ACTIVEFEATURES_1", MyConfig.MyActiveFeatures.CACHE_RESPONSES.toString());
+
+      env.put("MYAPP_CFG_MYAPICACHETIMEOUTMS", Long.toString(cacheTimeout));
+      env.put("MYAPP_CFG_MYAPIDISTANCETOLERANCE", Double.toString(dist));
+      env.put("MYAPP_CFG_MYAPIMAXREQUESTSPERSEC", Integer.toString(maxReq));
+      env.put("MYAPP_CFG_MYAPIKEYFDMASK", apiKey);
+
+      env.put("MYAPP_CFG_MYAPIENDPOINTS_0", apiHost0);
+      env.put("MYAPP_CFG_MYAPIENDPOINTS_1", apiHost1);
+
+      env.put("MYAPP_CFG_PRICECONFIG_minPrice", Integer.toString(val0));
+      env.put("MYAPP_CFG_PRICECONFIG_maxPrice", Integer.toString(val1));
+      env.put("MYAPP_CFG_PRICECONFIG_avgPrice", Integer.toString(val2));
+
+      env.put("MYAPP_CFG_BITFLAGS_0", Boolean.toString(true));
+      env.put("MYAPP_CFG_BITFLAGS_1", Boolean.toString(false));
+      env.put("MYAPP_CFG_BITFLAGS_2", Boolean.toString(false));
+      env.put("MYAPP_CFG_BITFLAGS_3", Boolean.toString(true));
+
+      env.put("MYAPP_CFG_KEYPAIRS_0_PUBKEY", kpPub0);
+      env.put("MYAPP_CFG_KEYPAIRS_0_PRIVKEYFDMASK", kpPrv0);
+      env.put("MYAPP_CFG_KEYPAIRS_1_PUBKEY", kpPub1);
+      env.put("MYAPP_CFG_KEYPAIRS_1_PRIVKEYFDMASK", kpPrv1);
+
+      env.put("MYAPP_CFG_ROUTES_0_PATH", "/");
+      env.put("MYAPP_CFG_ROUTES_0_BACKEND", "wordpress");
+      env.put("MYAPP_CFG_ROUTES_0_PRIORITY", "0");
+      env.put("MYAPP_CFG_ROUTES_1_PATH", "/api");
+      env.put("MYAPP_CFG_ROUTES_1_BACKEND", "api");
+      env.put("MYAPP_CFG_ROUTES_1_PRIORITY", "1");
+
+      Fbd<MyConfig> fbd = new Fbd<>(MyConfig.class, env, "MYAPP");
+      MyConfig cfg = fbd.load();
+      System.out.println(new FdLog().apply(cfg));
+    });
+
     it("Can print an object with masked fields.", () -> {
       MyConfig cfg = new MyConfig();
 

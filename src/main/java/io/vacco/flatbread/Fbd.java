@@ -14,9 +14,10 @@ public class Fbd<T> {
   public Fbd(Class<T> tClass, Map<String, String> dotKeys, String keyPrefix) {
     try {
       this.rootClass = Objects.requireNonNull(tClass);
-      dotKeys.forEach((k, v) -> paths.add(
-          new FdPath(k.replace(format("%s.", keyPrefix), "")).withRawValue(v))
-      );
+      dotKeys.forEach((k, v) -> {
+        String key = k.replace("_", ".").replace(format("%s.", keyPrefix), "");
+        paths.add(new FdPath(key).withRawValue(v));
+      });
       new TreeSet<>(paths).forEach(p -> {
         String pKey = p.parentKey();
         while (pKey != null) {
