@@ -14,10 +14,12 @@ public class Fbd<T> {
   public Fbd(Class<T> tClass, Map<String, String> dotKeys, String keyPrefix) {
     try {
       this.rootClass = Objects.requireNonNull(tClass);
-      dotKeys.forEach((k, v) -> {
-        String key = k.replace("_", ".").replace(format("%s.", keyPrefix), "");
-        paths.add(new FdPath(key).withRawValue(v));
-      });
+      dotKeys.entrySet().stream()
+          .filter(e -> e.getKey().startsWith(keyPrefix))
+          .forEach(e -> {
+            String key = e.getKey().replace("_", ".").replace(format("%s.", keyPrefix), "");
+            paths.add(new FdPath(key).withRawValue(e.getValue()));
+          });
       new TreeSet<>(paths).forEach(p -> {
         String pKey = p.parentKey();
         while (pKey != null) {

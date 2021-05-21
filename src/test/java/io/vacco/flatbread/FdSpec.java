@@ -133,6 +133,8 @@ public class FdSpec {
       env.put("MYAPP_CFG_ROUTES_1_BACKEND", "api");
       env.put("MYAPP_CFG_ROUTES_1_PRIORITY", "1");
 
+      env.put("SOME_OTHER_ENV_VAR", "999");
+
       Fbd<MyConfig> fbd = new Fbd<>(MyConfig.class, env, "MYAPP");
       MyConfig cfg = fbd.load();
       System.out.println(new FdLog().apply(cfg));
