@@ -26,6 +26,20 @@ public class MyConfig {
     }
   }
 
+  public static class MyRoute {
+    public String path;
+    public String backend;
+    public int priority;
+
+    public static MyRoute from(String path, String backend, int priority) {
+      MyRoute r = new MyRoute();
+      r.path = path;
+      r.backend = backend;
+      r.priority = priority;
+      return r;
+    }
+  }
+
   public MyServiceConfig dbConfig;
 
   public String instanceName;
@@ -39,6 +53,7 @@ public class MyConfig {
 
   public boolean[] bitFlags;
 
+  public MyRoute[] routes;
   public List<MyKeyPair> keyPairs;
   public List<MyActiveFeatures> activeFeatures;
   public Map<String, Integer> priceConfig;

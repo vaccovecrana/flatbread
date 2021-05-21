@@ -1,8 +1,7 @@
 package io.vacco.flatbread;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class FdReflect {
 
@@ -20,6 +19,18 @@ public class FdReflect {
     if (short[].class.equals(type))   { al = ((short[]) o).length;    oa = new Object[al]; for (int i = 0; i < al; i++) { oa[i] = ((short[]) o)[i]; } }
     if (byte[].class.equals(type))    { al = ((byte[]) o).length;     oa = new Object[al]; for (int i = 0; i < al; i++) { oa[i] = ((byte[]) o)[i]; } }
     return oa;
+  }
+
+  public static void arrSet(int idx, Object arr, Object val) {
+    if (arr instanceof int[]) { ((int[]) arr)[idx] = (int) val; }
+    else if (arr instanceof double[])   { ((double[]) arr)[idx]   = (double) val; }
+    else if (arr instanceof char[])     { ((char[]) arr)[idx]     = (char) val; }
+    else if (arr instanceof boolean[])  { ((boolean[]) arr)[idx]  = (boolean) val; }
+    else if (arr instanceof long[])     { ((long[]) arr)[idx]     = (long) val; }
+    else if (arr instanceof float[])    { ((float[]) arr)[idx]    = (float) val; }
+    else if (arr instanceof short[])    { ((short[]) arr)[idx]    = (short) val; }
+    else if (arr instanceof byte[])     { ((byte[]) arr)[idx]     = (byte) val; }
+    else if (arr instanceof Object[])   { ((Object[]) arr)[idx]   = val; }
   }
 
   public static Class<?> toWrapperClass(Class<?> type) {
@@ -64,8 +75,18 @@ public class FdReflect {
   public static boolean isSet(Object o) { return o instanceof Set<?>; }
   public static boolean isArray(Object o) { return o != null && o.getClass().isArray(); }
 
+  public static boolean isList(Class<?> c) { return List.class.isAssignableFrom(c); }
+  public static boolean isMap(Class<?> c) { return Map.class.isAssignableFrom(c); }
+
   public static boolean isCollection(Object o) {
     return isList(o) || isMap(o) || isSet(o) || isArray(o);
+  }
+
+  public static Type[] genericTypesOf(Field f) {
+    if (f.getGenericType() instanceof ParameterizedType) {
+      return ((ParameterizedType) f.getGenericType()).getActualTypeArguments();
+    }
+    return new Type[0];
   }
 
 }

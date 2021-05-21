@@ -31,10 +31,11 @@ public class FdSpec {
 
     it("Can traverse a path upwards.", () -> {
       FdPath p = new FdPath("myApp.cfg.keyPairs.1.privKeyFdMask");
-      Optional<FdPath> parent = p.parent();
-      while (parent.isPresent()) {
+      String pKey = p.parentKey();
+      while (pKey != null) {
+        FdPath parent = new FdPath(pKey);
         System.out.println(parent);
-        parent = parent.get().parent();
+        pKey = parent.parentKey();
       }
     });
 
@@ -74,9 +75,16 @@ public class FdSpec {
       flats.put("myApp.cfg.keyPairs.1.pubKey", kpPub1);
       flats.put("myApp.cfg.keyPairs.1.privKeyFdMask", kpPrv1);
 
+      flats.put("myApp.cfg.routes.0.path", "/");
+      flats.put("myApp.cfg.routes.0.backend", "wordpress");
+      flats.put("myApp.cfg.routes.0.priority", "0");
+      flats.put("myApp.cfg.routes.1.path", "/api");
+      flats.put("myApp.cfg.routes.1.backend", "api");
+      flats.put("myApp.cfg.routes.1.priority", "1");
+
       Fbd<MyConfig> fbd = new Fbd<>(MyConfig.class, flats, "myApp");
       MyConfig cfg = fbd.load();
-      int arrayMatches = fbd.pathSeqLength(new FdPath("cfg.bitFlags.0"));
+      int arrayMatches = new FdPath("cfg.bitFlags").seqChildren(fbd.paths).size();
 
       System.out.println(arrayMatches);
       System.out.println(new FdLog().apply(cfg));
@@ -114,6 +122,10 @@ public class FdSpec {
       cfg.keyPairs = new ArrayList<>();
       cfg.keyPairs.add(MyConfig.MyKeyPair.from(kpPub0, kpPrv0));
       cfg.keyPairs.add(MyConfig.MyKeyPair.from(kpPub1, kpPrv1));
+
+      cfg.routes = new MyConfig.MyRoute[2];
+      cfg.routes[0] = MyConfig.MyRoute.from("/", "wordpress", 0);
+      cfg.routes[1] = MyConfig.MyRoute.from("/api", "api", 1);
 
       System.out.println(new FdLog().apply(cfg));
     });
