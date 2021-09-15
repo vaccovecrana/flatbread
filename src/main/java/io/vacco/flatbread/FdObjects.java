@@ -50,8 +50,14 @@ public class FdObjects {
         Method vOf = fType.getMethod("valueOf", String.class);
         return Optional.of(vOf.invoke(null, rawValue));
       } else if (Enum.class.isAssignableFrom(fType)) {
-        Method vOf = fType.getMethod("valueOf", Class.class, String.class);
-        return Optional.of(vOf.invoke(null, fType, rawValue));
+        Object[] enumValues = wrap(fType.getMethod("values").invoke(null));
+        for (Object o : enumValues) {
+          if (o.toString().equalsIgnoreCase(rawValue)) {
+            return Optional.of(o);
+          }
+        }
+        String msg = String.format("Enum value not found: [%s, %s]", rawValue, Arrays.toString(enumValues));
+        throw new IllegalArgumentException(msg);
       } else if (String.class.isAssignableFrom(fType)) {
         return Optional.of(rawValue);
       } else if (isList(fType)) {

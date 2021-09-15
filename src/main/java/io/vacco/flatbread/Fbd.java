@@ -1,6 +1,6 @@
 package io.vacco.flatbread;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.*;
 import java.util.*;
 import static io.vacco.flatbread.FdObjects.*;
 import static io.vacco.flatbread.FdReflect.*;
@@ -33,41 +33,54 @@ public class Fbd<T> {
     }
   }
 
+  public Fbd(Class<T> tClass, Properties props, String keyPrefix) {
+    this(tClass, fromProps(props), keyPrefix);
+  }
+
   @SuppressWarnings({"unchecked", "rawtypes"})
   public void init(FdPath p0, FdPath p1) {
-    p1.parent = p0;
-    if (isMap(p0.target)) {
-      instance(((Class<?>) genericTypesOf(p0.field)[1]), p1.rawValue)
-          .ifPresent(v -> ((Map) p0.target).put(p1.attribute, v));
-    } else if (isInteger(p0.attribute)) {
-      getField(p0.target.getClass(), p1.attribute)
-          .ifPresent(f -> instance(f.getType(), p1.rawValue)
-              .ifPresent(o -> assign(f, p0.target, o)));
-    } else if (isInteger(p1.attribute)) {
-      if (isList(p0.target)) {
-        instance(((Class<?>) genericTypesOf(p0.field)[0]), p1.rawValue).ifPresent(o -> {
-          ((List) p0.target).add(Integer.parseInt(p1.attribute), o);
-          p1.target = o;
-        });
-      } else if (p0.field.getType().isArray()) {
-        if (p0.target == null) {
-          p0.target = Array.newInstance(p0.field.getType().getComponentType(), p0.seqChildren(paths).size());
-          assign(p0.field, p0.parent.target, p0.target);
+    try {
+      p1.parent = p0;
+      if (isMap(p0.target)) {
+        Type[] mapTypes = genericTypesOf(p0.field);
+        Type kType = mapTypes[0];
+        Type vType = mapTypes[1];
+        Optional<Object> k = instance(((Class<?>) kType), p1.attribute);
+        Optional<Object> v = instance(((Class<?>) vType), p1.rawValue);
+        ((Map) p0.target).put(k.get(), v.get());
+      } else if (isInteger(p0.attribute)) {
+        getField(p0.target.getClass(), p1.attribute)
+            .ifPresent(f -> instance(f.getType(), p1.rawValue)
+                .ifPresent(o -> assign(f, p0.target, o)));
+      } else if (isInteger(p1.attribute)) {
+        if (isList(p0.target)) {
+          instance(((Class<?>) genericTypesOf(p0.field)[0]), p1.rawValue).ifPresent(o -> {
+            ((List) p0.target).add(Integer.parseInt(p1.attribute), o);
+            p1.target = o;
+          });
+        } else if (p0.field.getType().isArray()) {
+          if (p0.target == null) {
+            p0.target = Array.newInstance(p0.field.getType().getComponentType(), p0.seqChildren(paths).size());
+            assign(p0.field, p0.parent.target, p0.target);
+          }
+          instance(p0.target.getClass().getComponentType(), p1.rawValue).ifPresent(o -> {
+            arrSet(Integer.parseInt(p1.attribute), p0.target, o);
+            p1.target = o;
+          });
         }
-        instance(p0.target.getClass().getComponentType(), p1.rawValue).ifPresent(o -> {
-          arrSet(Integer.parseInt(p1.attribute), p0.target, o);
-          p1.target = o;
+      } else {
+        Class<?> pc = p0.target != null ?  p0.target.getClass() : p0.field.getType();
+        getField(pc, p1.attribute).ifPresent(f -> {
+          p1.field = f;
+          instance(p1.field.getType(), p1.rawValue).ifPresent(o -> {
+            p1.target = o;
+            assign(p1.field, p0.target, p1.target);
+          });
         });
       }
-    } else {
-      Class<?> pc = p0.target != null ?  p0.target.getClass() : p0.field.getType();
-      getField(pc, p1.attribute).ifPresent(f -> {
-        p1.field = f;
-        instance(p1.field.getType(), p1.rawValue).ifPresent(o -> {
-          p1.target = o;
-          assign(p1.field, p0.target, p1.target);
-        });
-      });
+    } catch (Exception e) {
+      String fmt = "Unable to initialize paths: [%s, %s]. Make sure all your property paths have the same prefix.";
+      throw new IllegalStateException(String.format(fmt, p0, p1), e);
     }
   }
 
@@ -89,6 +102,12 @@ public class Fbd<T> {
       lPaths = pathsAt(++k, paths);
     }
     return (T) pathsAt(0, paths).get(0).target;
+  }
+
+  private static Map<String, String> fromProps(Properties p) {
+    Map<String, String> strProps = new LinkedHashMap<>();
+    p.forEach((oK, oV) -> strProps.put(oK.toString(), oV.toString()));
+    return strProps;
   }
 
 }

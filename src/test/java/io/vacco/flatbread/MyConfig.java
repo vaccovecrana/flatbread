@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class MyConfig {
 
+  public enum MyVoteType { Like, Dislike }
   public enum MyRuntimeType { API_SERVER, BACKGROUND_JOB }
   public enum MyActiveFeatures { CACHE_RESPONSES, FILTER_ZERO_RESULTS, BLUE_DEPLOYMENT }
 
@@ -56,6 +57,9 @@ public class MyConfig {
   public MyRoute[] routes;
   public List<MyKeyPair> keyPairs;
   public List<MyActiveFeatures> activeFeatures;
+
   public Map<String, Integer> priceConfig;
+  public Map<MyVoteType, Integer> voteLimits;
+  public Map<Integer, Integer> bitFlagIdx;
 
 }

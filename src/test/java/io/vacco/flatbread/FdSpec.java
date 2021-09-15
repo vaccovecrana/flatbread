@@ -20,7 +20,7 @@ public class FdSpec {
   static double dist = 45.0;
 
   static String key0 = "minPrice", key1 = "maxPrice", key2 = "avgPrice";
-  static int val0 = 100, val1 = 1000, val2 = 500;
+  static int val0 = 100, val1 = 1000, val2 = 500, val3 = 1001;
 
   static String
       kpPub0 = "abcdef0123", kpPrv0 = "cdf32142345345345345",
@@ -40,7 +40,7 @@ public class FdSpec {
     });
 
     it("Can hydrate a non-cyclic object from dot notation property strings.", () -> {
-      Map<String, String> flats = new LinkedHashMap<>();
+      Properties flats = new Properties();
 
       flats.put("myApp.cfg.dbConfig.host", host);
       flats.put("myApp.cfg.dbConfig.port", Integer.toString(port));
@@ -81,6 +81,12 @@ public class FdSpec {
       flats.put("myApp.cfg.routes.1.path", "/api");
       flats.put("myApp.cfg.routes.1.backend", "api");
       flats.put("myApp.cfg.routes.1.priority", "1");
+
+      flats.put("myApp.cfg.voteLimits.Like", "5");
+      flats.put("myApp.cfg.voteLimits.Dislike", "5");
+
+      flats.put("myApp.cfg.bitFlagIdx.1000", "600");
+      flats.put("myApp.cfg.bitFlagIdx.1001", "455");
 
       Fbd<MyConfig> fbd = new Fbd<>(MyConfig.class, flats, "myApp");
       MyConfig cfg = fbd.load();
@@ -133,6 +139,12 @@ public class FdSpec {
       env.put("MYAPP_CFG_ROUTES_1_BACKEND", "api");
       env.put("MYAPP_CFG_ROUTES_1_PRIORITY", "1");
 
+      env.put("MYAPP_CFG_VOTELIMITS_LIKE", "5");
+      env.put("MYAPP_CFG_VOTELIMITS_DISLIKE", "5");
+
+      env.put("MYAPP_CFG_BITFLAGIDX_1000", "600");
+      env.put("MYAPP_CFG_BITFLAGIDX_1001", "455");
+
       env.put("SOME_OTHER_ENV_VAR", "999");
 
       Fbd<MyConfig> fbd = new Fbd<>(MyConfig.class, env, "MYAPP");
@@ -166,6 +178,14 @@ public class FdSpec {
       cfg.priceConfig.put(key0, val0);
       cfg.priceConfig.put(key1, val1);
       cfg.priceConfig.put(key2, val2);
+
+      cfg.voteLimits = new LinkedHashMap<>();
+      cfg.voteLimits.put(MyConfig.MyVoteType.Like, 5);
+      cfg.voteLimits.put(MyConfig.MyVoteType.Dislike, 5);
+
+      cfg.bitFlagIdx = new LinkedHashMap<>();
+      cfg.bitFlagIdx.put(val1, 600);
+      cfg.bitFlagIdx.put(val3, 455);
 
       cfg.bitFlags = new boolean[] {true, false, false, true};
 
