@@ -41,6 +41,16 @@ public class MyConfig {
     }
   }
 
+  public static class MyVoteConfig {
+    public int min, max;
+    public static MyVoteConfig from(int min, int max) {
+      MyVoteConfig vc = new MyVoteConfig();
+      vc.min = min;
+      vc.max = max;
+      return vc;
+    }
+  }
+
   public MyServiceConfig dbConfig;
 
   public String instanceName;
@@ -59,7 +69,7 @@ public class MyConfig {
   public List<MyActiveFeatures> activeFeatures;
 
   public Map<String, Integer> priceConfig;
-  public Map<MyVoteType, Integer> voteLimits;
+  public Map<MyVoteType, MyVoteConfig> voteLimits;
   public Map<Integer, Integer> bitFlagIdx;
 
 }

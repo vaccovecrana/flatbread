@@ -17,7 +17,7 @@ public class Fbd<T> {
       dotKeys.entrySet().stream()
           .filter(e -> e.getKey().startsWith(keyPrefix))
           .forEach(e -> {
-            String key = e.getKey().replace("_", ".").replace(format("%s.", keyPrefix), "");
+            String key = e.getKey().replace("_", ".").replace(format("%s.", keyPrefix), "cfg.");
             paths.add(new FdPath(key).withRawValue(e.getValue()));
           });
       new TreeSet<>(paths).forEach(p -> {
@@ -47,6 +47,7 @@ public class Fbd<T> {
         Type vType = mapTypes[1];
         Optional<Object> k = instance(((Class<?>) kType), p1.attribute);
         Optional<Object> v = instance(((Class<?>) vType), p1.rawValue);
+        p1.target = v.get();
         ((Map) p0.target).put(k.get(), v.get());
       } else if (isInteger(p0.attribute)) {
         getField(p0.target.getClass(), p1.attribute)

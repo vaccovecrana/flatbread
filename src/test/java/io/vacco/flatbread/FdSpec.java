@@ -30,7 +30,7 @@ public class FdSpec {
     beforeEach(() -> System.out.println("============================================"));
 
     it("Can traverse a path upwards.", () -> {
-      FdPath p = new FdPath("myApp.cfg.keyPairs.1.privKeyFdMask");
+      FdPath p = new FdPath("myApp.keyPairs.1.privKeyFdMask");
       String pKey = p.parentKey();
       while (pKey != null) {
         FdPath parent = new FdPath(pKey);
@@ -42,51 +42,53 @@ public class FdSpec {
     it("Can hydrate a non-cyclic object from dot notation property strings.", () -> {
       Properties flats = new Properties();
 
-      flats.put("myApp.cfg.dbConfig.host", host);
-      flats.put("myApp.cfg.dbConfig.port", Integer.toString(port));
-      flats.put("myApp.cfg.dbConfig.userFdMask", user);
-      flats.put("myApp.cfg.dbConfig.passwordFdMask", pass);
+      flats.put("myApp.dbConfig.host", host);
+      flats.put("myApp.dbConfig.port", Integer.toString(port));
+      flats.put("myApp.dbConfig.userFdMask", user);
+      flats.put("myApp.dbConfig.passwordFdMask", pass);
 
-      flats.put("myApp.cfg.instanceName", instance);
-      flats.put("myApp.cfg.runtimeType", MyConfig.MyRuntimeType.API_SERVER.toString());
+      flats.put("myApp.instanceName", instance);
+      flats.put("myApp.runtimeType", MyConfig.MyRuntimeType.API_SERVER.toString());
 
-      flats.put("myApp.cfg.activeFeatures.0", MyConfig.MyActiveFeatures.BLUE_DEPLOYMENT.toString());
-      flats.put("myApp.cfg.activeFeatures.1", MyConfig.MyActiveFeatures.CACHE_RESPONSES.toString());
+      flats.put("myApp.activeFeatures.0", MyConfig.MyActiveFeatures.BLUE_DEPLOYMENT.toString());
+      flats.put("myApp.activeFeatures.1", MyConfig.MyActiveFeatures.CACHE_RESPONSES.toString());
 
-      flats.put("myApp.cfg.myApiCacheTimeoutMs", Long.toString(cacheTimeout));
-      flats.put("myApp.cfg.myApiDistanceTolerance", Double.toString(dist));
-      flats.put("myApp.cfg.myApiMaxRequestsPerSec", Integer.toString(maxReq));
-      flats.put("myApp.cfg.myApiKeyFdMask", apiKey);
+      flats.put("myApp.myApiCacheTimeoutMs", Long.toString(cacheTimeout));
+      flats.put("myApp.myApiDistanceTolerance", Double.toString(dist));
+      flats.put("myApp.myApiMaxRequestsPerSec", Integer.toString(maxReq));
+      flats.put("myApp.myApiKeyFdMask", apiKey);
 
-      flats.put("myApp.cfg.myApiEndPoints.0", apiHost0);
-      flats.put("myApp.cfg.myApiEndPoints.1", apiHost1);
+      flats.put("myApp.myApiEndPoints.0", apiHost0);
+      flats.put("myApp.myApiEndPoints.1", apiHost1);
 
-      flats.put("myApp.cfg.priceConfig.minPrice", Integer.toString(val0));
-      flats.put("myApp.cfg.priceConfig.maxPrice", Integer.toString(val1));
-      flats.put("myApp.cfg.priceConfig.avgPrice", Integer.toString(val2));
+      flats.put("myApp.priceConfig.minPrice", Integer.toString(val0));
+      flats.put("myApp.priceConfig.maxPrice", Integer.toString(val1));
+      flats.put("myApp.priceConfig.avgPrice", Integer.toString(val2));
 
-      flats.put("myApp.cfg.bitFlags.0", Boolean.toString(true));
-      flats.put("myApp.cfg.bitFlags.1", Boolean.toString(false));
-      flats.put("myApp.cfg.bitFlags.2", Boolean.toString(false));
-      flats.put("myApp.cfg.bitFlags.3", Boolean.toString(true));
+      flats.put("myApp.bitFlags.0", Boolean.toString(true));
+      flats.put("myApp.bitFlags.1", Boolean.toString(false));
+      flats.put("myApp.bitFlags.2", Boolean.toString(false));
+      flats.put("myApp.bitFlags.3", Boolean.toString(true));
 
-      flats.put("myApp.cfg.keyPairs.0.pubKey", kpPub0);
-      flats.put("myApp.cfg.keyPairs.0.privKeyFdMask", kpPrv0);
-      flats.put("myApp.cfg.keyPairs.1.pubKey", kpPub1);
-      flats.put("myApp.cfg.keyPairs.1.privKeyFdMask", kpPrv1);
+      flats.put("myApp.keyPairs.0.pubKey", kpPub0);
+      flats.put("myApp.keyPairs.0.privKeyFdMask", kpPrv0);
+      flats.put("myApp.keyPairs.1.pubKey", kpPub1);
+      flats.put("myApp.keyPairs.1.privKeyFdMask", kpPrv1);
 
-      flats.put("myApp.cfg.routes.0.path", "/");
-      flats.put("myApp.cfg.routes.0.backend", "wordpress");
-      flats.put("myApp.cfg.routes.0.priority", "0");
-      flats.put("myApp.cfg.routes.1.path", "/api");
-      flats.put("myApp.cfg.routes.1.backend", "api");
-      flats.put("myApp.cfg.routes.1.priority", "1");
+      flats.put("myApp.routes.0.path", "/");
+      flats.put("myApp.routes.0.backend", "wordpress");
+      flats.put("myApp.routes.0.priority", "0");
+      flats.put("myApp.routes.1.path", "/api");
+      flats.put("myApp.routes.1.backend", "api");
+      flats.put("myApp.routes.1.priority", "1");
 
-      flats.put("myApp.cfg.voteLimits.Like", "5");
-      flats.put("myApp.cfg.voteLimits.Dislike", "5");
+      flats.put("myApp.voteLimits.Like.min", "5");
+      flats.put("myApp.voteLimits.Like.max", "5");
+      flats.put("myApp.voteLimits.Dislike.min", "5");
+      flats.put("myApp.voteLimits.Dislike.max", "5");
 
-      flats.put("myApp.cfg.bitFlagIdx.1000", "600");
-      flats.put("myApp.cfg.bitFlagIdx.1001", "455");
+      flats.put("myApp.bitFlagIdx.1000", "600");
+      flats.put("myApp.bitFlagIdx.1001", "455");
 
       Fbd<MyConfig> fbd = new Fbd<>(MyConfig.class, flats, "myApp");
       MyConfig cfg = fbd.load();
@@ -99,51 +101,53 @@ public class FdSpec {
     it("Can hydrate a non-cyclic object from environment notation property strings.", () -> {
       Map<String, String> env = new LinkedHashMap<>();
 
-      env.put("MYAPP_CFG_DBCONFIG_HOST", host);
-      env.put("MYAPP_CFG_DBCONFIG_PORT", Integer.toString(port));
-      env.put("MYAPP_CFG_DBCONFIG_USERFDMASK", user);
-      env.put("MYAPP_CFG_DBCONFIG_PASSWORDFDMASK", pass);
+      env.put("MYAPP_DBCONFIG_HOST", host);
+      env.put("MYAPP_DBCONFIG_PORT", Integer.toString(port));
+      env.put("MYAPP_DBCONFIG_USERFDMASK", user);
+      env.put("MYAPP_DBCONFIG_PASSWORDFDMASK", pass);
 
-      env.put("MYAPP_CFG_INSTANCENAME", instance);
-      env.put("MYAPP_CFG_RUNTIMETYPE", MyConfig.MyRuntimeType.API_SERVER.toString());
+      env.put("MYAPP_INSTANCENAME", instance);
+      env.put("MYAPP_RUNTIMETYPE", MyConfig.MyRuntimeType.API_SERVER.toString());
 
-      env.put("MYAPP_CFG_ACTIVEFEATURES_0", MyConfig.MyActiveFeatures.BLUE_DEPLOYMENT.toString());
-      env.put("MYAPP_CFG_ACTIVEFEATURES_1", MyConfig.MyActiveFeatures.CACHE_RESPONSES.toString());
+      env.put("MYAPP_ACTIVEFEATURES_0", MyConfig.MyActiveFeatures.BLUE_DEPLOYMENT.toString());
+      env.put("MYAPP_ACTIVEFEATURES_1", MyConfig.MyActiveFeatures.CACHE_RESPONSES.toString());
 
-      env.put("MYAPP_CFG_MYAPICACHETIMEOUTMS", Long.toString(cacheTimeout));
-      env.put("MYAPP_CFG_MYAPIDISTANCETOLERANCE", Double.toString(dist));
-      env.put("MYAPP_CFG_MYAPIMAXREQUESTSPERSEC", Integer.toString(maxReq));
-      env.put("MYAPP_CFG_MYAPIKEYFDMASK", apiKey);
+      env.put("MYAPP_MYAPICACHETIMEOUTMS", Long.toString(cacheTimeout));
+      env.put("MYAPP_MYAPIDISTANCETOLERANCE", Double.toString(dist));
+      env.put("MYAPP_MYAPIMAXREQUESTSPERSEC", Integer.toString(maxReq));
+      env.put("MYAPP_MYAPIKEYFDMASK", apiKey);
 
-      env.put("MYAPP_CFG_MYAPIENDPOINTS_0", apiHost0);
-      env.put("MYAPP_CFG_MYAPIENDPOINTS_1", apiHost1);
+      env.put("MYAPP_MYAPIENDPOINTS_0", apiHost0);
+      env.put("MYAPP_MYAPIENDPOINTS_1", apiHost1);
 
-      env.put("MYAPP_CFG_PRICECONFIG_minPrice", Integer.toString(val0));
-      env.put("MYAPP_CFG_PRICECONFIG_maxPrice", Integer.toString(val1));
-      env.put("MYAPP_CFG_PRICECONFIG_avgPrice", Integer.toString(val2));
+      env.put("MYAPP_PRICECONFIG_minPrice", Integer.toString(val0));
+      env.put("MYAPP_PRICECONFIG_maxPrice", Integer.toString(val1));
+      env.put("MYAPP_PRICECONFIG_avgPrice", Integer.toString(val2));
 
-      env.put("MYAPP_CFG_BITFLAGS_0", Boolean.toString(true));
-      env.put("MYAPP_CFG_BITFLAGS_1", Boolean.toString(false));
-      env.put("MYAPP_CFG_BITFLAGS_2", Boolean.toString(false));
-      env.put("MYAPP_CFG_BITFLAGS_3", Boolean.toString(true));
+      env.put("MYAPP_BITFLAGS_0", Boolean.toString(true));
+      env.put("MYAPP_BITFLAGS_1", Boolean.toString(false));
+      env.put("MYAPP_BITFLAGS_2", Boolean.toString(false));
+      env.put("MYAPP_BITFLAGS_3", Boolean.toString(true));
 
-      env.put("MYAPP_CFG_KEYPAIRS_0_PUBKEY", kpPub0);
-      env.put("MYAPP_CFG_KEYPAIRS_0_PRIVKEYFDMASK", kpPrv0);
-      env.put("MYAPP_CFG_KEYPAIRS_1_PUBKEY", kpPub1);
-      env.put("MYAPP_CFG_KEYPAIRS_1_PRIVKEYFDMASK", kpPrv1);
+      env.put("MYAPP_KEYPAIRS_0_PUBKEY", kpPub0);
+      env.put("MYAPP_KEYPAIRS_0_PRIVKEYFDMASK", kpPrv0);
+      env.put("MYAPP_KEYPAIRS_1_PUBKEY", kpPub1);
+      env.put("MYAPP_KEYPAIRS_1_PRIVKEYFDMASK", kpPrv1);
 
-      env.put("MYAPP_CFG_ROUTES_0_PATH", "/");
-      env.put("MYAPP_CFG_ROUTES_0_BACKEND", "wordpress");
-      env.put("MYAPP_CFG_ROUTES_0_PRIORITY", "0");
-      env.put("MYAPP_CFG_ROUTES_1_PATH", "/api");
-      env.put("MYAPP_CFG_ROUTES_1_BACKEND", "api");
-      env.put("MYAPP_CFG_ROUTES_1_PRIORITY", "1");
+      env.put("MYAPP_ROUTES_0_PATH", "/");
+      env.put("MYAPP_ROUTES_0_BACKEND", "wordpress");
+      env.put("MYAPP_ROUTES_0_PRIORITY", "0");
+      env.put("MYAPP_ROUTES_1_PATH", "/api");
+      env.put("MYAPP_ROUTES_1_BACKEND", "api");
+      env.put("MYAPP_ROUTES_1_PRIORITY", "1");
 
-      env.put("MYAPP_CFG_VOTELIMITS_LIKE", "5");
-      env.put("MYAPP_CFG_VOTELIMITS_DISLIKE", "5");
+      env.put("MYAPP_VOTELIMITS_LIKE_MIN", "5");
+      env.put("MYAPP_VOTELIMITS_LIKE_MAX", "5");
+      env.put("MYAPP_VOTELIMITS_DISLIKE_MIN", "5");
+      env.put("MYAPP_VOTELIMITS_DISLIKE_MAX", "5");
 
-      env.put("MYAPP_CFG_BITFLAGIDX_1000", "600");
-      env.put("MYAPP_CFG_BITFLAGIDX_1001", "455");
+      env.put("MYAPP_BITFLAGIDX_1000", "600");
+      env.put("MYAPP_BITFLAGIDX_1001", "455");
 
       env.put("SOME_OTHER_ENV_VAR", "999");
 
@@ -180,8 +184,8 @@ public class FdSpec {
       cfg.priceConfig.put(key2, val2);
 
       cfg.voteLimits = new LinkedHashMap<>();
-      cfg.voteLimits.put(MyConfig.MyVoteType.Like, 5);
-      cfg.voteLimits.put(MyConfig.MyVoteType.Dislike, 5);
+      cfg.voteLimits.put(MyConfig.MyVoteType.Like, MyConfig.MyVoteConfig.from(5, 5));
+      cfg.voteLimits.put(MyConfig.MyVoteType.Dislike, MyConfig.MyVoteConfig.from(5, 5));
 
       cfg.bitFlagIdx = new LinkedHashMap<>();
       cfg.bitFlagIdx.put(val1, 600);
