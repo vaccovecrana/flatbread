@@ -19,7 +19,7 @@ public class FdSpec {
   static int port = 3306, cacheTimeout = 30000, maxReq = 50;
   static double dist = 45.0;
 
-  static String key0 = "minPrice", key1 = "maxPrice", key2 = "avgPrice";
+  static String key0 = "minPrice", key1 = "maxPrice", key2 = "avgPrice", key3 = "sum_price";
   static int val0 = 100, val1 = 1000, val2 = 500, val3 = 1001;
 
   static String
@@ -64,6 +64,7 @@ public class FdSpec {
       flats.put("myApp.priceConfig.minPrice", Integer.toString(val0));
       flats.put("myApp.priceConfig.maxPrice", Integer.toString(val1));
       flats.put("myApp.priceConfig.avgPrice", Integer.toString(val2));
+      flats.put("myApp.priceConfig.sum___price", Integer.toString(val2));
 
       flats.put("myApp.bitFlags.0", Boolean.toString(true));
       flats.put("myApp.bitFlags.1", Boolean.toString(false));
@@ -123,6 +124,7 @@ public class FdSpec {
       env.put("MYAPP_PRICECONFIG_minPrice", Integer.toString(val0));
       env.put("MYAPP_PRICECONFIG_maxPrice", Integer.toString(val1));
       env.put("MYAPP_PRICECONFIG_avgPrice", Integer.toString(val2));
+      env.put("MYAPP_PRICECONFIG_sum___price", Integer.toString(val2));
 
       env.put("MYAPP_BITFLAGS_0", Boolean.toString(true));
       env.put("MYAPP_BITFLAGS_1", Boolean.toString(false));
@@ -182,6 +184,7 @@ public class FdSpec {
       cfg.priceConfig.put(key0, val0);
       cfg.priceConfig.put(key1, val1);
       cfg.priceConfig.put(key2, val2);
+      cfg.priceConfig.put(key3, val2);
 
       cfg.voteLimits = new LinkedHashMap<>();
       cfg.voteLimits.put(MyConfig.MyVoteType.Like, MyConfig.MyVoteConfig.from(5, 5));

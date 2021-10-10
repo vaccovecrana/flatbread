@@ -17,7 +17,10 @@ public class Fbd<T> {
       dotKeys.entrySet().stream()
           .filter(e -> e.getKey().startsWith(keyPrefix))
           .forEach(e -> {
-            String key = e.getKey().replace("_", ".").replace(format("%s.", keyPrefix), "cfg.");
+            String key = e.getKey()
+                .replace("_", ".")
+                .replace("...", "_")
+                .replace(format("%s.", keyPrefix), "cfg.");
             paths.add(new FdPath(key).withRawValue(e.getValue()));
           });
       new TreeSet<>(paths).forEach(p -> {
