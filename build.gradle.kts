@@ -1,4 +1,4 @@
-plugins { id("io.vacco.oss.gitflow") version "0.9.8" }
+plugins { id("io.vacco.oss.gitflow") version "1.8.3" }
 
 group = "io.vacco.flatbread"
 version = "0.1.4"
